@@ -1,23 +1,3 @@
-resource "azurerm_public_ip" "vm_public_ip" {
-  name                = "webapp-public-ip"
-  location            = azurerm_resource_group.webapp_rg.location
-  resource_group_name = azurerm_resource_group.webapp_rg.name
-  allocation_method   = "Static"
-}
-
-resource "azurerm_network_interface" "vm_nic" {
-  name                = "webapp-nic"
-  location            = azurerm_resource_group.webapp_rg.location
-  resource_group_name = azurerm_resource_group.webapp_rg.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.vm_public_ip.id
-  }
-}
-
 resource "azurerm_linux_virtual_machine" "vm" {
   name                  = "webapp-vm"
   resource_group_name   = azurerm_resource_group.webapp_rg.name
@@ -44,4 +24,24 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   custom_data = filebase64("scripts/install_nginx.sh")
+}
+
+resource "azurerm_public_ip" "vm_public_ip" {
+  name                = "webapp-public-ip"
+  location            = azurerm_resource_group.webapp_rg.location
+  resource_group_name = azurerm_resource_group.webapp_rg.name
+  allocation_method   = "Static"
+}
+
+resource "azurerm_network_interface" "vm_nic" {
+  name                = "webapp-nic"
+  location            = azurerm_resource_group.webapp_rg.location
+  resource_group_name = azurerm_resource_group.webapp_rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.vm_public_ip.id
+  }
 }
