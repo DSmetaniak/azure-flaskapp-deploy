@@ -5,6 +5,7 @@ terraform {
       version = "~> 3.0"
     }
   }
+
   backend "azurerm" {
     resource_group_name  = "terraform-backend-rg"
     storage_account_name = "flaskapptfstateak"

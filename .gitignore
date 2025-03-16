@@ -1,4 +1,3 @@
 .terraform
 .terraform.lock.hcl
-variables.tf
 terraform.tfvars

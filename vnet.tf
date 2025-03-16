@@ -1,28 +1,28 @@
 resource "azurerm_virtual_network" "vnet" {
-  name                = "webapp-vnet"
-  location            = azurerm_resource_group.webapp_rg.location
-  resource_group_name = azurerm_resource_group.webapp_rg.name
+  name                = "${var.prefix}-vnet"
+  location            = var.location
+  resource_group_name = var.resource_group_name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "webapp-subnet"
-  resource_group_name  = azurerm_resource_group.webapp_rg.name
+  name                 = "${var.prefix}-subnet"
+  resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
 
 resource "azurerm_network_security_group" "nsg" {
-  name                = "webapp-nsg"
-  location            = azurerm_resource_group.webapp_rg.location
-  resource_group_name = azurerm_resource_group.webapp_rg.name
+  name                = "${var.prefix}-nsg"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 }
 
 # Allow SSH from your IP
 resource "azurerm_network_security_rule" "ssh_rule" {
   name                        = "AllowSSH"
-  priority                    = 1001
+  priority                    = var.nsg_ssh_priority
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
@@ -37,7 +37,7 @@ resource "azurerm_network_security_rule" "ssh_rule" {
 # Allow HTTP and HTTPS from anywhere
 resource "azurerm_network_security_rule" "http_https_rule" {
   name                        = "AllowHTTP_HTTPS"
-  priority                    = 1002
+  priority                    = var.nsg_http_priority
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"

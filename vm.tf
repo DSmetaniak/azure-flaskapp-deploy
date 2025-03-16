@@ -1,14 +1,14 @@
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                  = "webapp-vm"
-  resource_group_name   = azurerm_resource_group.webapp_rg.name
-  location              = azurerm_resource_group.webapp_rg.location
-  size                  = "Standard_B1s"
-  admin_username        = "azureuser"
+  name                  = "${var.prefix}-vm"
+  resource_group_name   = var.resource_group_name
+  location              = var.location
+  size                  = var.vm_size
+  admin_username        = var.admin_username
   network_interface_ids = [azurerm_network_interface.vm_nic.id]
 
   admin_ssh_key {
-    username   = "azureuser"
-    public_key = file("~/.ssh/id_rsa.pub")
+    username   = var.admin_username
+    public_key = file(var.ssh_public_key_path)
   }
 
   os_disk {
@@ -27,16 +27,16 @@ resource "azurerm_linux_virtual_machine" "vm" {
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
-  name                = "webapp-public-ip"
-  location            = azurerm_resource_group.webapp_rg.location
-  resource_group_name = azurerm_resource_group.webapp_rg.name
+  name                = "${var.prefix}-public-ip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
   allocation_method   = "Static"
 }
 
 resource "azurerm_network_interface" "vm_nic" {
-  name                = "webapp-nic"
-  location            = azurerm_resource_group.webapp_rg.location
-  resource_group_name = azurerm_resource_group.webapp_rg.name
+  name                = "${var.prefix}-nic"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
     name                          = "internal"
